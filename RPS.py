@@ -1,34 +1,42 @@
-"""This program plays a game of Rock, Paper, Scissors between two Players,
-and reports both Player's scores each round."""
+"""
+This program plays a game of Rock, Paper, Scissors between two Players,
+and reports both Player's scores each round.
+"""
 
 import random
-
 import time
 
-#  Available game moves for users to choose from
-
-moves = ['rock', 'paper', 'scissors']
-
-"""The Player class is the parent class for all of the Players
-in this game"""
+# Available game moves for users to choose from
+MOVES = ['rock', 'paper', 'scissors']
 
 
 class Player:
+    """
+    The Player class is the parent class for all of the Players
+    in this game
+    """
     def __init__(self):
         self.moves = ['rock', 'paper', 'scissors']
-        self.my_action = random.choice(moves)
+        self.my_action = random.choice(MOVES)
         self.their_action = None
         self.current_move = 0
+
     def learn(self, my_action, their_action):
         self.my_action = my_action
         self.their_action = their_action
-class randomPlayer(Player):
+
+
+class RandomPlayer(Player):
     def move(self):
-        return random.choice(moves)
-class reflectPlayer(Player):
+        return random.choice(MOVES)
+
+
+class ReflectPlayer(Player):
     def move(self):
         return self.their_action
-class cyclePlayer(Player):
+
+
+class CyclePlayer(Player):
     def move(self):
         if self.my_action == self.moves[0]:
             return self.moves[1]
@@ -36,22 +44,14 @@ class cyclePlayer(Player):
             return self.moves[2]
         else:
             return self.moves[0]
-class cyclePlayer(Player):
+
+
+class RockPlayer(Player):
     def move(self):
-        if self.current_move == len(moves):
-            self.current_move = 0
-        return moves[self.current_move]
-class humanPlayer(Player):
-    def move(self):
-        while True:
-            response = input("Rock, paper, scissors? > ").lower()
-            if response.lower() in self.moves:
-                return response.lower()
-            elif response.lower() == "quit":
-                exit()
-            else:
-                print("Please enter a valid move.")
-class valid_input(Player):
+        return "rock"
+
+
+class HumanPlayer(Player):
     def move(self):
         while True:
             response = input("Rock, paper, scissors? > ").lower()
@@ -61,19 +61,36 @@ class valid_input(Player):
                 exit()
             else:
                 print("Please enter a valid move.")
+
+
+class ValidInput(Player):
+    def move(self):
+        while True:
+            response = input("Rock, paper, scissors? > ").lower()
+            if response.lower() in self.moves:
+                return response.lower()
+            elif response.lower() == "quit":
+                exit()
+            else:
+                print("Please enter a valid move.")
+
+
 class Game:
     def __init__(self, p1, p2):
         self.p1 = p1
         self.p2 = p2
         self.score_p1 = 0
         self.score_p2 = 0
+
     def beats(self, one, two):
         return ((one == 'rock' and two == 'scissors') or
                 (one == 'scissors' and two == 'paper') or
                 (one == 'paper' and two == 'rock'))
+
     def rounds(self):
         while True:
-            self.num_rounds = input("How many rounds would you like to play? >")
+            self.num_rounds = input(
+                "How many rounds would you like to play? >")
             if self.num_rounds.isdigit():
                 return int(self.num_rounds)
             elif self.num_rounds.lower() == "quit":
@@ -82,6 +99,7 @@ class Game:
                 print("Please enter a number.")
             else:
                 return "Please enter a number."
+
     def play_round(self):
         move1 = self.p1.move()
         move2 = self.p2.move()
@@ -97,6 +115,7 @@ class Game:
         print(f"Score: Player 1: {self.score_p1} Player 2: {self.score_p2}")
         self.p1.learn(move1, move2)
         self.p2.learn(move2, move1)
+
     def play_game(self):
         print("Game start!")
         self.rounds()
@@ -111,6 +130,9 @@ class Game:
             return "Player 2 wins!"
         else:
             return "Game over!"
+
+
 if __name__ == '__main__':
-    game = Game(humanPlayer(), random.choice([randomPlayer(), reflectPlayer(), cyclePlayer()]))
+    game = Game(HumanPlayer(), random.choice(
+        [RandomPlayer(), ReflectPlayer(), CyclePlayer(), RockPlayer()]))
     game.play_game()
